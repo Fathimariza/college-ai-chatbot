@@ -1,0 +1,32 @@
+.home-page{
+background: linear-gradient(to right,#667eea,#764ba2);
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+font-family:Arial;
+}
+
+.welcome-box{
+background:white;
+padding:40px;
+border-radius:20px;
+text-align:center;
+box-shadow:0 20px 40px rgba(0,0,0,0.2);
+width:400px;
+}
+
+.start-btn{
+margin-top:20px;
+padding:12px 25px;
+border:none;
+background:#5a67d8;
+color:white;
+font-size:16px;
+border-radius:25px;
+cursor:pointer;
+}
+
+.start-btn:hover{
+background:#434190;
+}
