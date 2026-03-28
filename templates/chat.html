@@ -1,235 +1,301 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <title>LBS AI Chatbot</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-<meta charset="UTF-8">
-<title>LBS AI Chatbot</title>
+        body {
+            margin: 0;
+            font-family: 'Poppins', sans-serif;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(-45deg, #667eea, #764ba2, #6dd5ed, #2193b0);
+            background-size: 400% 400%;
+            animation: gradientMove 10s ease infinite;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500&display=swap" rel="stylesheet">
+        @keyframes gradientMove {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-<style>
+        .chat-card {
+            width: 500px;
+            height: 700px;
+            backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.15);
+            border-radius: 20px;
+            box-shadow: 0 25px 45px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
 
-/* Background */
+        .chat-header {
+            padding: 18px;
+            text-align: center;
+            color: white;
+            font-size: 20px;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+            position: relative;
+            background: rgba(0, 0, 0, 0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-body{
-margin:0;
-font-family:'Poppins',sans-serif;
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-background:linear-gradient(-45deg,#667eea,#764ba2,#6dd5ed,#2193b0);
-background-size:400% 400%;
-animation:gradientMove 10s ease infinite;
-}
+        .home-btn {
+            color: white;
+            text-decoration: none;
+            font-size: 20px;
+            transition: transform 0.2s;
+        }
 
-/* gradient animation */
+        .home-btn:hover {
+            transform: scale(1.1);
+        }
 
-@keyframes gradientMove{
-0%{background-position:0% 50%;}
-50%{background-position:100% 50%;}
-100%{background-position:0% 50%;}
-}
+        .clear-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 18px;
+            cursor: pointer;
+            transition: transform 0.2s;
+            padding: 5px;
+        }
 
-/* Chat card */
+        .clear-btn:hover {
+            transform: scale(1.1);
+            color: #ff6b6b;
+        }
 
-.chat-card{
-width:450px;
-height:650px;
-backdrop-filter:blur(15px);
-background:rgba(255,255,255,0.15);
-border-radius:20px;
-box-shadow:0 25px 45px rgba(0,0,0,0.2);
-display:flex;
-flex-direction:column;
-overflow:hidden;
-}
+        .chat-box {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
 
-/* Header */
+        .chat-box::-webkit-scrollbar {
+            width: 6px;
+        }
 
-.chat-header{
-padding:18px;
-text-align:center;
-color:white;
-font-size:20px;
-font-weight:500;
-border-bottom:1px solid rgba(255,255,255,0.2);
-}
+        .chat-box::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
 
-/* Chat messages */
+        .chat-box::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 10px;
+        }
 
-.chat-box{
-flex:1;
-padding:20px;
-overflow-y:auto;
-display:flex;
-flex-direction:column;
-}
+        .message {
+            padding: 12px 16px;
+            border-radius: 20px;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            line-height: 1.5;
+            position: relative;
+        }
 
-/* Message bubble */
+        .user {
+            align-self: flex-end;
+            background: #ffffff;
+            color: #333;
+            border-bottom-right-radius: 5px;
+        }
 
-.message{
-padding:12px 16px;
-border-radius:20px;
-margin:8px 0;
-max-width:75%;
-animation:fadeIn .4s ease;
-}
+        .bot {
+            align-self: flex-start;
+            background: #1a1a2e;
+            color: white;
+            border-bottom-left-radius: 5px;
+        }
 
-/* User */
+        .timestamp {
+            font-size: 10px;
+            opacity: 0.6;
+            margin-top: 5px;
+            text-align: right;
+        }
 
-.user{
-align-self:flex-end;
-background:#ffffff;
-color:#333;
-border-bottom-right-radius:5px;
-}
+        .bot .timestamp {
+            text-align: left;
+        }
 
-/* Bot */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
 
-.bot{
-align-self:flex-start;
-background:#222;
-color:white;
-border-bottom-left-radius:5px;
-}
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            gap: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
 
-/* Fade animation */
+        .chat-input input {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+            font-family: 'Poppins', sans-serif;
+        }
 
-@keyframes fadeIn{
-from{
-opacity:0;
-transform:translateY(10px);
-}
-to{
-opacity:1;
-transform:translateY(0);
-}
-}
+        .chat-input button {
+            width: 45px;
+            height: 45px;
+            border: none;
+            border-radius: 50%;
+            background: #ffffff;
+            cursor: pointer;
+            font-size: 18px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-/* Input area */
+        .chat-input button:hover {
+            transform: scale(1.05);
+            background: #667eea;
+            color: white;
+        }
 
-.chat-input{
-display:flex;
-padding:15px;
-gap:10px;
-background:rgba(255,255,255,0.2);
-}
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: white;
+        }
 
-/* Input box */
-
-.chat-input input{
-flex:1;
-padding:12px;
-border:none;
-border-radius:30px;
-outline:none;
-font-size:14px;
-}
-
-/* Send button */
-
-.chat-input button{
-width:45px;
-height:45px;
-border:none;
-border-radius:50%;
-background:#ffffff;
-cursor:pointer;
-font-size:18px;
-transition:.2s;
-}
-
-.chat-input button:hover{
-transform:scale(1.1);
-}
-
-/* typing animation */
-
-.typing{
-width:50px;
-display:flex;
-justify-content:space-between;
-}
-
-.typing span{
-width:8px;
-height:8px;
-background:white;
-border-radius:50%;
-animation:bounce 1.2s infinite;
-}
-
-.typing span:nth-child(2){
-animation-delay:.2s;
-}
-
-.typing span:nth-child(3){
-animation-delay:.4s;
-}
-
-@keyframes bounce{
-0%,80%,100%{transform:scale(0);}
-40%{transform:scale(1);}
-}
-
-/* Mobile */
-
-@media(max-width:500px){
-
-.chat-card{
-width:95%;
-height:95vh;
-}
-
-}
-
-</style>
-
+        @media (max-width: 600px) {
+            .chat-card {
+                width: 95%;
+                height: 95vh;
+            }
+            
+            .message {
+                max-width: 90%;
+                font-size: 14px;
+            }
+        }
+    </style>
 </head>
-
-
 <body>
+    <div class="chat-card">
+        <div class="chat-header">
+            <a href="/" class="home-btn">🏠</a>
+            🤖 LBS College AI Assistant
+            <button class="clear-btn" onclick="clearHistory()" title="Clear chat history">🗑️</button>
+        </div>
 
-<div class="chat-card">
+        <div class="chat-box" id="chatBox">
+            {% if chat_history and chat_history|length > 0 %}
+                {% for msg in chat_history %}
+                    <div class="message {{ 'user' if msg.sender == 'You' else 'bot' }}">
+                        {{ msg.message | replace('\n', '<br>') | safe }}
+                        <div class="timestamp">{{ msg.timestamp }}</div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <div class="empty-state">
+                    <div style="font-size: 48px; margin-bottom: 20px;">💬</div>
+                    <div style="font-size: 18px; margin-bottom: 10px;">No messages yet</div>
+                    <div style="font-size: 14px; opacity: 0.8;">Start a conversation with LBS AI Assistant!</div>
+                </div>
+            {% endif %}
+        </div>
 
-<div class="chat-header">
-<a href="/" class="home-btn">🏠 Home</a>
-🤖 LBS College AI Assistant
-</div>
+        <form method="POST" action="/chat" class="chat-input" id="chatForm">
+            <input type="text" name="message" placeholder="Ask something..." required autocomplete="off" id="messageInput">
+            <button type="submit">➤</button>
+        </form>
+    </div>
 
-<div class="chat-box" id="chatBox">
-
-{% for sender, message in chat_history %}
-
-<div class="message {{ 'user' if sender == 'You' else 'bot' }}">
-{{ message }}
-</div>
-
-{% endfor %}
-
-</div>
-
-<form method="POST" class="chat-input">
-
-<input type="text" name="message" placeholder="Ask something..." required>
-
-<button type="submit">➤</button>
-
-</form>
-
-</div>
-
-<script>
-
-/* Auto scroll */
-
-const chatBox=document.getElementById("chatBox");
-chatBox.scrollTop=chatBox.scrollHeight;
-
-</script>
-
+    <script>
+        // Auto scroll to bottom
+        const chatBox = document.getElementById("chatBox");
+        const chatForm = document.getElementById("chatForm");
+        const messageInput = document.getElementById("messageInput");
+        
+        // Scroll to bottom on load
+        chatBox.scrollTop = chatBox.scrollHeight;
+        
+        // Focus input field
+        messageInput.focus();
+        
+        // Clear history function
+        function clearHistory() {
+            if (confirm('Are you sure you want to clear all chat history?')) {
+                fetch('/clear_history', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }).then(() => {
+                    location.reload();
+                });
+            }
+        }
+        
+        // Prevent form submission on Enter if input is empty
+        chatForm.addEventListener("submit", function(e) {
+            if (!messageInput.value.trim()) {
+                e.preventDefault();
+                return false;
+            }
+        });
+        
+        // Auto-resize chat box when new messages appear
+        const observer = new MutationObserver(function(mutations) {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        });
+        
+        observer.observe(chatBox, { childList: true, subtree: true });
+        
+        // Send message on Enter key
+        messageInput.addEventListener("keypress", function(e) {
+            if (e.key === "Enter" && messageInput.value.trim()) {
+                chatForm.submit();
+            }
+        });
+        
+        // Save scroll position before page unload (optional)
+        window.addEventListener('beforeunload', function() {
+            sessionStorage.setItem('scrollPosition', chatBox.scrollTop);
+        });
+        
+        // Restore scroll position (optional)
+        if (sessionStorage.getItem('scrollPosition')) {
+            chatBox.scrollTop = sessionStorage.getItem('scrollPosition');
+        }
+    </script>
 </body>
-
 </html>
