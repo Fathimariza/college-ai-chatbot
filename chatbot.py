@@ -21,6 +21,17 @@ CREATE TABLE IF NOT EXISTS users (
 
 conn.commit()
 
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS chats (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id INTEGER,
+    message TEXT,
+    response TEXT,
+    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP
+)
+""")
+conn.commit()
+
 
 # Load FAQ data from JSON file
 def load_faq_data():
@@ -189,36 +200,38 @@ def home():
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
-    """Chat page route with session-based history"""
-    if 'user' not in session:
+    if 'user_id' not in session:
         return redirect('/login')
-    
-    if 'chat_history' not in session:
-        session['chat_history'] = []
-    
+
+    user_id = session['user_id']
+
     if request.method == "POST":
         user_message = request.form.get("message")
-        
+
         if user_message:
             reply = get_response(user_message)
-            
-            session['chat_history'].append({
-                'sender': 'You',
-                'message': user_message,
-                'timestamp': datetime.now().strftime("%H:%M")
-            })
-            session['chat_history'].append({
-                'sender': 'Bot',
-                'message': reply,
-                'timestamp': datetime.now().strftime("%H:%M")
-            })
-            
-            if len(session['chat_history']) > 50:
-                session['chat_history'] = session['chat_history'][-50:]
-            
-            session.modified = True
-    
-    return render_template("chat.html", chat_history=session['chat_history'])
+
+            cursor.execute(
+                "INSERT INTO chats (user_id, message, response) VALUES (?, ?, ?)",
+                (user_id, user_message, reply)
+            )
+            conn.commit()
+
+    cursor.execute(
+        "SELECT message, response FROM chats WHERE user_id=?",
+        (user_id,)
+    )
+    chat_data = cursor.fetchall()
+
+    chat_history = []
+    for msg, res in chat_data:
+        chat_history.append({'sender': 'You', 'message': msg})
+        chat_history.append({'sender': 'Bot', 'message': res})
+
+    return render_template("chat.html", chat_history=chat_history)
+
+
+
 
 @app.route("/clear_history", methods=["POST"])
 def clear_history():
@@ -269,7 +282,8 @@ def login():
 
         if user:
 
-            session['user'] = user[1]  # save username
+            session['user_id'] = user[0]   # store user id
+            session['user'] = user[1]      # optional (username)
 
             return redirect('/chat')
 
@@ -283,7 +297,7 @@ def login():
 def logout():
     session.pop('user',None)
 
-    return redirct('/login')
+    return redirect('/login')
 
 if __name__ == "__main__":
     app.run(debug=True)
