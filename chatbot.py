@@ -1,10 +1,26 @@
-from flask import Flask, render_template, request, session
+from flask import Flask, render_template, request, session, redirect
+import sqlite3
 import json
 import re
 from datetime import datetime
 
 app = Flask(__name__)
 app.secret_key = 'your-secret-key-here-change-this-in-production'
+# Database setup
+conn = sqlite3.connect('users.db', check_same_thread=False)
+cursor = conn.cursor()
+
+cursor.execute("""
+CREATE TABLE IF NOT EXISTS users (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    email TEXT,
+    password TEXT
+)
+""")
+
+conn.commit()
+
 
 # Load FAQ data from JSON file
 def load_faq_data():
@@ -174,6 +190,9 @@ def home():
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
     """Chat page route with session-based history"""
+    if 'user' not in session:
+        return redirect('/login')
+    
     if 'chat_history' not in session:
         session['chat_history'] = []
     
@@ -207,6 +226,64 @@ def clear_history():
     session['chat_history'] = []
     session.modified = True
     return '', 204
+
+
+    
+@app.route('/signup', methods=['GET', 'POST'])
+def signup():
+
+    if request.method == 'POST':
+
+        name = request.form['name']
+        email = request.form['email']
+        password = request.form['password']
+
+        cursor.execute(
+            "INSERT INTO users (name, email, password) VALUES (?, ?, ?)",
+            (name, email, password)
+        )
+
+        conn.commit()
+
+        return redirect('/login')
+
+    return render_template('signup.html')
+
+
+
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+
+    if request.method == 'POST':
+
+        email = request.form['email']
+        password = request.form['password']
+
+        cursor.execute(
+            "SELECT * FROM users WHERE email=? AND password=?",
+            (email, password)
+        )
+
+        user = cursor.fetchone()
+
+        if user:
+
+            session['user'] = user[1]  # save username
+
+            return redirect('/chat')
+
+        else:
+            return "Invalid Email or Password"
+
+    return render_template('login.html')
+
+# logout here
+@app.route('/logout')
+def logout():
+    session.pop('user',None)
+
+    return redirct('/login')
 
 if __name__ == "__main__":
     app.run(debug=True)
