@@ -196,7 +196,7 @@ def get_response(user_input):
 @app.route("/")
 def home():
     """Home page route"""
-    return render_template("home.html")
+    return render_template("login.html")
 
 @app.route("/chat", methods=["GET", "POST"])
 def chat():
@@ -230,6 +230,11 @@ def chat():
 
     return render_template("chat.html", chat_history=chat_history)
 
+@app.route('/start')
+def start():
+    if 'user_id' not in session:
+        return redirect('/login')
+    return render_template("home.html")
 
 
 
@@ -258,7 +263,7 @@ def signup():
 
         conn.commit()
 
-        return redirect('/login')
+        return redirect('/')
 
     return render_template('signup.html')
 
@@ -285,7 +290,7 @@ def login():
             session['user_id'] = user[0]   # store user id
             session['user'] = user[1]      # optional (username)
 
-            return redirect('/chat')
+            return redirect('/start')
 
         else:
             return "Invalid Email or Password"
