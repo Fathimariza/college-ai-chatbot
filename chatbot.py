@@ -240,11 +240,18 @@ def start():
 
 @app.route("/clear_history", methods=["POST"])
 def clear_history():
-    """Clear chat history"""
-    session['chat_history'] = []
-    session.modified = True
-    return '', 204
+    if 'user_id' not in session:
+        return redirect('/login')
 
+    user_id = session['user_id']
+
+    cursor.execute(
+        "DELETE FROM chats WHERE user_id=?",
+        (user_id,)
+    )
+    conn.commit()
+
+    return redirect('/chat')
 
     
 @app.route('/signup', methods=['GET', 'POST'])
