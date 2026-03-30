@@ -1,28 +1,64 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Login</title>
+    <title>Login / Signup</title>
+    <link rel="stylesheet" href="/static/style.css">
 </head>
 
-<body>
+<body class="home-bg">
 
-<h2>Login</h2>
+<div class="overlay">
 
-<form action="/login" method="POST">
+    <h1 style="text-align:center; color:white;">College AI Chatbot</h1>
 
-Email:<br>
-<input type="email" name="email" required><br><br>
+    <div class="glass-card">
 
-Password:<br>
-<input type="password" name="password" required><br><br>
+        <h2 class="title" id="form-title">Login</h2>
 
-<button type="submit">Login</button>
+        <!-- LOGIN FORM -->
+        <form id="loginForm" action="/login" method="POST">
+            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+            <button class="start-btn" type="submit">Login</button>
+        </form>
 
-</form>
+        <!-- SIGNUP FORM -->
+        <form id="signupForm" action="/signup" method="POST" style="display:none;">
+            <input type="text" name="name" placeholder="Enter Name" required>
+            <input type="email" name="email" placeholder="Enter Email" required>
+            <input type="password" name="password" placeholder="Enter Password" required>
+            <button class="start-btn" type="submit">Signup</button>
+        </form>
 
-<br>
+        <p id="toggleText">
+            Don't have an account? 
+            <span onclick="toggleForm()">Signup</span>
+        </p>
 
-<a href="/signup">New user? Signup here</a>
+    </div>
+
+</div>
+
+<script>
+function toggleForm() {
+    let loginForm = document.getElementById("loginForm");
+    let signupForm = document.getElementById("signupForm");
+    let title = document.getElementById("form-title");
+    let text = document.getElementById("toggleText");
+
+    if (loginForm.style.display === "none") {
+        loginForm.style.display = "block";
+        signupForm.style.display = "none";
+        title.innerText = "Login";
+        text.innerHTML = `Don't have an account? <span onclick="toggleForm()">Signup</span>`;
+    } else {
+        loginForm.style.display = "none";
+        signupForm.style.display = "block";
+        title.innerText = "Signup";
+        text.innerHTML = `Already have an account? <span onclick="toggleForm()">Login</span>`;
+    }
+}
+</script>
 
 </body>
 </html>
