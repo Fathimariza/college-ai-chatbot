@@ -209,13 +209,19 @@
     </style>
 </head>
 <body>
-    <div class="chat-card">
-        <div class="chat-header">
-            <a href="/" class="home-btn">🏠</a>
-            🤖 LBS College AI Assistant
-            <a href="/logout" class="home-btn" title="Logout"></a>
-            <button class="clear-btn" onclick="clearHistory()" title="Clear chat history">🗑️</button>
-        </div>
+   <div class="chat-card">
+      <div class="chat-header">
+    <a href="/" class="home-btn">🏠</a>
+
+    <span>
+        🤖 LBS College AI Assistant - {{ session.user }}
+    </span>
+
+    <div>
+        <a href="/logout" class="home-btn" title="Logout">🚪</a>
+        <button class="clear-btn" onclick="clearHistory()" title="Clear chat history">🗑️</button>
+    </div>
+</div>  
 
         <div class="chat-box" id="chatBox">
             {% if chat_history and chat_history|length > 0 %}
