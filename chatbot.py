@@ -308,6 +308,7 @@ def login():
 @app.route('/logout')
 def logout():
     session.pop('user',None)
+    session.pop('user_id',None)
 
     return redirect('/login')
 

@@ -94,3 +94,49 @@ box-shadow:0 0 15px #ffcc00;
     flex: 1;
     text-align: center;
 }
+/* ===== Chat Header Buttons ===== */
+
+.action-btn {
+    padding: 8px 14px;
+    border-radius: 20px;
+    border: none;
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* Hover effect */
+.action-btn:hover {
+    background: #ffffff;
+    color: #333;
+    transform: scale(1.05);
+}
+
+/* Specific button styles */
+.home-btn:hover {
+    background: #4caf50;
+    color: white;
+}
+
+.logout-btn:hover {
+    background: #ff4d4d;
+    color: white;
+}
+
+.clear-btn:hover {
+    background: #ff6b6b;
+    color: white;
+}
+
+/* Right side buttons spacing */
+.header-actions {
+    display: flex;
+    gap: 10px;
+}

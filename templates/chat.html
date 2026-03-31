@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>LBS AI Chatbot</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -211,17 +212,19 @@
 <body>
    <div class="chat-card">
       <div class="chat-header">
-    <a href="/" class="home-btn">🏠</a>
+
+    <a href="/" class="action-btn home-btn">🏠 Home</a>
 
     <span>
         🤖 LBS College AI Assistant - {{ session.user }}
     </span>
 
-    <div>
-        <a href="/logout" class="home-btn" title="Logout">🚪</a>
-        <button class="clear-btn" onclick="clearHistory()" title="Clear chat history">🗑️</button>
+    <div class="header-actions">
+        <a href="/logout" class="action-btn logout-btn">🚪 Logout</a>
+        <button class="action-btn clear-btn" onclick="clearHistory()">🗑️ Clear</button>
     </div>
-</div>  
+
+</div>
 
         <div class="chat-box" id="chatBox">
             {% if chat_history and chat_history|length > 0 %}
